@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-
+using UnityEngine.SceneManagement;
 public class Jugador : MonoBehaviour
 {
 
@@ -53,7 +52,14 @@ public class Jugador : MonoBehaviour
 			isJumping = false;
 			jumpTimer = 0;
         }
-
 	}
-	
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Suelo")
+        {
+			UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver_2");
+        }
+    }
+
 }
