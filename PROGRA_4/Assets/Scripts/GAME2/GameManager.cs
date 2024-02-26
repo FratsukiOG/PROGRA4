@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,25 +9,56 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject sueloPrefab;
 
     // Start is called before the first frame update
-    void Start()
+
+    #region Singleton
+
+    public static GameManager Instance;
+
+    private void Awake()
     {
-        StartCoroutine(CreateSuelo());
+        if (Instance == null) Instance = this;
     }
-    IEnumerator CreateSuelo()
+
+    #endregion
+
+    public float currentScore = 0;
+
+    public bool isPlaying = false;
+
+    public UnityEvent onPlay = new UnityEvent();
+    public UnityEvent onGameOver = new UnityEvent();
+
+    private void Update()
     {
-        while (true)
+        if (isPlaying)
         {
-            int xPosition = Random.Range(0, 3);
-
-            GameObject newSuelo = Instantiate(sueloPrefab, new Vector2(Utils.GetRightSide(), xPosition), Quaternion.identity);
-            newSuelo.name = "Suelo";
-            yield return new WaitForSeconds(3.0f);
+            currentScore += Time.deltaTime;
         }
-    } 
 
-        // Update is called once per frame
-        void Update()
-    {
-        
+        if (Input.GetKeyDown("k"))
+        {
+            isPlaying = true;
+        }
     }
+
+    public void StartGame()
+    {
+        onPlay.Invoke();
+        isPlaying = true;
+    }
+
+    public string PrettyScore ()
+    {
+        return Mathf.RoundToInt(currentScore).ToString();
+    }
+
+    public void GameOver()
+    {
+        onGameOver.Invoke();
+        currentScore = 0;
+        isPlaying = false;
+    }
+
+    
+    
 }
